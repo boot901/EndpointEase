@@ -1,4 +1,4 @@
-# EndpointEase
+# EndpointEasy
 <h2>allows for easy endpoint configuration</h2>
 specifically for Nservicebus
 <h2>Recent changes</h2>
