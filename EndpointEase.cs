@@ -50,9 +50,11 @@ namespace EndpointEase
             }
             
         }
-        public static void addUsage<serial, transport, persist,databus,container>(ref EndpointConfiguration e, Action<NserviceBus.Container.ContainerCustomizations> custom = null, string connectionstring = null) where serial : NServiceBus.Serialization.SerializationDefinition, new()
+        public static void addUsage<serial, transport, persist,databus,container>(ref EndpointConfiguration e, Action<NServiceBus.Container.ContainerCustomizations> custom = null, string connectionstring = null) where serial : NServiceBus.Serialization.SerializationDefinition, new()
                                                                                            where transport : NServiceBus.Transport.TransportDefinition, new()
                                                                                            where persist : NServiceBus.Persistence.PersistenceDefinition
+                                                                                             where databus : NServiceBus.DataBus.DataBusDefinition,new()                                                                                           
+                                                                                             where container : NServiceBus.Container.ContainerDefinition,new()
         {
             e.UseContainer<container>();
             e.UseDataBus<databus>();
@@ -67,7 +69,7 @@ namespace EndpointEase
                 e.UseTransport<transport>().ConnectionString(connectionstring);
             }
         }
-        public static void addUsage<serial, transport, persist,databus,container>(ref EndpointConfiguration e, ref object ser, ref object pers, ref object trans, ref object dat, Action<NserviceBus.Container.ContainerCustomizations> custom = null, string connectionstring = null) where serial : NServiceBus.Serialization.SerializationDefinition, new()
+        public static void addUsage<serial, transport, persist,databus,container>(ref EndpointConfiguration e, ref object ser, ref object pers, ref object trans, ref object dat, Action<NServiceBus.Container.ContainerCustomizations> custom = null, string connectionstring = null) where serial : NServiceBus.Serialization.SerializationDefinition, new()
                                                                                            where transport : NServiceBus.Transport.TransportDefinition, new()
                                                                                            where persist : NServiceBus.Persistence.PersistenceDefinition
                                                                                            where databus : NServiceBus.DataBus.DataBusDefinition,new()
@@ -119,11 +121,11 @@ namespace EndpointEase
             addUsage<serial, transport, persist>(ref e, connection);
             if (useRetries) { recover(ref e, immediateretries, delaysecs, delayretries); }
 
-
+            return e;
         }
         #region fullconfig
         public static EndpointConfiguration FullConfig<serial, transport, persist,databus,container>(string name, string errorName, bool enableinstall = true,
-                                                                                                    string connection = null, Action<NserviceBus.Container.ContainerCustomizations> custom = null, bool useRetries = false,
+                                                                                                    string connection = null, Action<NServiceBus.Container.ContainerCustomizations> custom = null, bool useRetries = false,
                                                                                                     int immediateretries = 0, float delaysecs = 0,
                                                                                                      int delayretries = 0)
             where serial : NServiceBus.Serialization.SerializationDefinition, new()
@@ -136,7 +138,7 @@ namespace EndpointEase
             var e = StartConfig(name, errorName, enableinstall);
             addUsage<serial, transport, persist,databus,container>(ref e,custom , connection);
             if (useRetries) { recover(ref e, immediateretries, delaysecs, delayretries); }
-
+            return e;
 
         }
         public static EndpointConfiguration FullConfig<serial, transport, persist>(string name, string errorName, ref object ser, 
@@ -151,13 +153,13 @@ namespace EndpointEase
             var e = StartConfig(name, errorName, enableinstall);
             addUsage<serial, transport, persist>(ref e, ref ser, ref pers, ref trans, connection);
             if (useRetries) { recover(ref e, immediateretries, delaysecs, delayretries); }
-
+            return e;
 
         }
         public static EndpointConfiguration FullConfig<serial, transport, persist, databus, container>(string name, string errorName, ref object ser,
                                                                                                        ref object pers, ref object trans,ref object dat , bool enableinstall = true,
                                                                                                        string connection = null, 
-                                                                                                       Action<NserviceBus.Container.ContainerCustomizations> custom = null, 
+                                                                                                       Action<NServiceBus.Container.ContainerCustomizations> custom = null, 
                                                                                                        bool useRetries = false,
                                                                                                        int immediateretries = 0, float delaysecs = 0,
                                                                                                        int delayretries = 0)
@@ -169,10 +171,10 @@ namespace EndpointEase
 
         {
             var e = StartConfig(name, errorName, enableinstall);
-            addUsage<serial, transport, persist, databus, container>(ref e,ser,pers,trans,dat, custom, connection);
+            addUsage<serial, transport, persist, databus, container>(ref e,ref ser,ref pers,ref trans,ref dat, custom, connection);
             if (useRetries) { recover(ref e, immediateretries, delaysecs, delayretries); }
 
-
+            return e;
         }
 #endregion
 
